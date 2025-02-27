@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport"
+	      content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>护眼统计</title>
+	<link rel="stylesheet" href="content/style.css">
+	<style>
+		.stats-container {
+			padding: 20px;
+			min-width: 300px;
+		}
+
+		.stat-item {
+			margin: 12px 0;
+			padding: 12px;
+			background: #f6ffed;
+			border-radius: 8px;
+		}
+
+		.toggle-switch {
+			position: relative;
+			display: inline-block;
+			width: 48px;
+			height: 24px;
+		}
+	</style>
+</head>
+<body>
+	<div class="stats-container">
+		<h2>📊 护眼统计</h2>
+		<div id="stats"></div>
+		<div class="toggle-switch">
+			<input type="checkbox" id="timerToggle">
+			<label for="timerToggle"></label>
+		</div>
+	</div>
+	<script src="stats.js"></script>
+</body>
+</html>

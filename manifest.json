@@ -1,0 +1,37 @@
+{
+  "manifest_version": 3,
+  "name": "智能护眼助手",
+  "version": "2.0",
+  "description": "基于20-20-20原则的优雅护眼提醒工具",
+  "permissions": [
+    "alarms",
+    "storage",
+    "scripting",
+    "notifications"
+  ],
+  "host_permissions": ["<all_urls>"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "css": ["content/style.css"],
+      "js": ["content/notification.js"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"]
+    }
+  ],
+  "icons": {
+    "128": "icons/icon-128.png"
+  },
+  "action": {
+    "default_popup": "stats.html",
+    "default_icon": {
+      "128": "icons/icon-128.png"
+    }
+  }
+}

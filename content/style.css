@@ -1,0 +1,114 @@
+/* 基础样式 */
+.eye-notification {
+	position: fixed;
+	top: 20px;
+	right: 20px;
+	z-index: 2147483647;
+	background: #f6ffed;
+	border: 1px solid #b7eb8f;
+	border-radius: 12px;
+	padding: 20px;
+	box-shadow: 0 6px 16px 0 rgba(0,0,0,0.08);
+	display: none;
+	max-width: 380px;
+	animation: slideIn 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+	font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, sans-serif;
+	transition: all 0.3s ease;
+}
+
+/* 深色模式适配 */
+@media (prefers-color-scheme: dark) {
+	.eye-notification {
+		background: #1a2a1c;
+		border-color: #2d4a1f;
+		color: #c6e8b3;
+	}
+
+	.confirm-button {
+		background: #3a5e2c !important;
+	}
+
+	.highlight {
+		color: #8dff6d !important;
+	}
+}
+
+/* 呼吸动画 */
+@keyframes breath {
+	0%, 100% { transform: scale(1); opacity: 0.9; }
+	50% { transform: scale(1.05); opacity: 1; }
+}
+
+.breathing-guide {
+	animation: breath 5s infinite ease-in-out;
+}
+
+/* 移动端适配 */
+.mobile-view {
+	top: 10px;
+	right: 10px;
+	left: 10px;
+	max-width: none;
+}
+
+/* 倒计时样式 */
+.countdown {
+	margin-top: 12px;
+	font-size: 12px;
+	color: #666;
+	text-align: center;
+}
+
+/* 按钮交互 */
+.confirm-button {
+	background: #52c41a;
+	color: white;
+	border: none;
+	padding: 12px 24px;
+	border-radius: 6px;
+	cursor: pointer;
+	transition: all 0.2s;
+	width: 100%;
+	margin-top: 16px;
+	font-weight: 500;
+}
+
+.confirm-button:hover {
+	background: #73d13d;
+	transform: translateY(-1px);
+}
+
+/* 文字样式 */
+.title {
+	font-size: 18px;
+	font-weight: 600;
+	margin-bottom: 8px;
+}
+
+.tip {
+	font-size: 14px;
+	line-height: 1.6;
+	color: #595959;
+}
+
+.highlight {
+	color: #237804;
+	font-weight: 600;
+}
+
+.subtip {
+	font-size: 12px;
+	color: #8c8c8c;
+}
+
+/* 动画效果 */
+@keyframes slideIn {
+	from {
+		opacity: 0;
+		transform: translateY(-30px) scale(0.95);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0) scale(1);
+	}
+}
