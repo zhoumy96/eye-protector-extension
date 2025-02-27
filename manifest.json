@@ -19,10 +19,6 @@
       "css": ["content/style.css"],
       "js": ["content/notification.js"],
       "run_at": "document_idle"
-    },
-    {
-      "matches": ["<all_urls>"],
-      "js": ["content.js"]
     }
   ],
   "icons": {

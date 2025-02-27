@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	// 开关状态同步
 	chrome.runtime.sendMessage({ action: 'getTimerStatus' }, (res) => {
-		toggle.checked = res.stats;
+		toggle.checked = res.status;
 	});
 
 	// 切换定时器状态
