@@ -40,9 +40,13 @@ class EyeNotifier {
 	setupListeners() {
 		this.button.addEventListener('click', () => this.handleConfirm());
 		window.addEventListener('resize', () => this.checkViewport());
-		chrome.runtime.onMessage.addListener((msg) => {
-			if (msg.action === 'showReminder') this.show();
-		});
+
+		// 增加消息监听器存在性检查
+		if (chrome.runtime?.onMessage) {
+			chrome.runtime.onMessage.addListener((msg) => {
+				if (msg.action === 'showReminder') this.show();
+			});
+		}
 	}
 
 	setupAutoClose() {
@@ -56,6 +60,7 @@ class EyeNotifier {
 	}
 
 	show() {
+		console.log('show');
 		this.container.classList.add('visible');
 		this.startCountdown();
 	}
@@ -69,6 +74,8 @@ class EyeNotifier {
 			this.updateCountdown();
 
 			if (this.remainingTime <= 0) {
+				console.log('自动关闭');
+				chrome.runtime.sendMessage({ action: 'skipTimer' });
 				this.handleConfirm();
 			}
 		}, 1000);

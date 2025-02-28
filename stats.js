@@ -12,19 +12,22 @@ document.addEventListener('DOMContentLoaded', () => {
       <div class="stat-item">
         ⏰ 今日提醒次数：${stats.totalReminders || 0}次
       </div>
+      <div class="stat-item">
+        ⏰ 今日跳过次数：${stats.skippedBreaks || 0}次
+      </div>
     `;
 	});
 
-	// 开关状态同步
-	chrome.runtime.sendMessage({ action: 'getTimerStatus' }, (res) => {
-		toggle.checked = res.status;
-	});
-
-	// 切换定时器状态
-	toggle.addEventListener('change', (e) => {
-		chrome.runtime.sendMessage({
-			action: 'toggleTimer',
-			status: e.target.checked
-		});
-	});
+	// // 开关状态同步
+	// chrome.runtime.sendMessage({ action: 'getTimerStatus' }, (res) => {
+	// 	toggle.checked = res.status;
+	// });
+	//
+	// // 切换定时器状态
+	// toggle.addEventListener('change', (e) => {
+	// 	chrome.runtime.sendMessage({
+	// 		action: 'toggleTimer',
+	// 		status: e.target.checked
+	// 	});
+	// });
 });

@@ -32,9 +32,10 @@ function checkDailyReset() {
 
 // 创建定时器
 function createAlarm() {
+	console.log('创建定时器');
 	chrome.alarms.create('eyeProtector', {
 		delayInMinutes: 1,
-		periodInMinutes: 20
+		// periodInMinutes: 20
 	});
 }
 
@@ -50,10 +51,16 @@ chrome.alarms.onAlarm.addListener((alarm) => {
 		dailyStats.totalReminders++;
 		saveStats();
 
-		// 发送提醒到内容脚本
 		chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-			if (tabs[0]?.id) {
-				chrome.tabs.sendMessage(tabs[0].id, { action: 'showReminder' });
+			console.log('tabs::', tabs);
+			if (tabs.length > 0 && tabs[0]?.id) {
+				chrome.tabs.sendMessage(tabs[0].id, { action: 'showReminder' }, (response) => {
+					console.log('showReminder');
+					if (chrome.runtime.lastError) {
+						// 静默处理连接错误
+						console.debug('Message ignored:', chrome.runtime.lastError.message);
+					}
+				});
 			}
 		});
 	}
@@ -67,6 +74,9 @@ chrome.runtime.onMessage.addListener((msg) => {
 		createAlarm();
 	} else if (msg.action === 'toggleTimer') {
 		timerStatus = msg.status;
+	} else if (msg.action === 'skipTimer') {
+		dailyStats.skippedBreaks++;
+		saveStats();
 	}
 });
 

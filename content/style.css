@@ -15,7 +15,11 @@
 	font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, sans-serif;
 	transition: all 0.3s ease;
 }
-
+.eye-notification.visible {
+	display: block !important;
+	opacity: 1;
+	pointer-events: auto;
+}
 /* 深色模式适配 */
 @media (prefers-color-scheme: dark) {
 	.eye-notification {
