@@ -18,7 +18,7 @@
       "matches": ["<all_urls>"],
       "css": ["content/style.css"],
       "js": ["content/notification.js"],
-      "run_at": "document_idle"
+      "run_at": "document_end"
     }
   ],
   "icons": {

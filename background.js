@@ -34,7 +34,7 @@ function checkDailyReset() {
 function createAlarm() {
 	console.log('创建定时器');
 	chrome.alarms.create('eyeProtector', {
-		delayInMinutes: 1,
+		delayInMinutes: 0.5,
 		// periodInMinutes: 20
 	});
 }
@@ -51,18 +51,24 @@ chrome.alarms.onAlarm.addListener((alarm) => {
 		dailyStats.totalReminders++;
 		saveStats();
 
-		chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-			console.log('tabs::', tabs);
-			if (tabs.length > 0 && tabs[0]?.id) {
-				chrome.tabs.sendMessage(tabs[0].id, { action: 'showReminder' }, (response) => {
-					console.log('showReminder');
-					if (chrome.runtime.lastError) {
-						// 静默处理连接错误
-						console.debug('Message ignored:', chrome.runtime.lastError.message);
-					}
-				});
-			}
+		// 窗口状态判断
+		chrome.windows.getLastFocused({ populate: false }, (window) => {
+			console.log('窗口状态判断::', window);
+			// chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+			chrome.tabs.query({ active: true, windowId: window.id }, (tabs) => {
+				console.log('tabs::', tabs);
+				if (tabs.length > 0 && tabs[0]?.id) {
+					chrome.tabs.sendMessage(tabs[0].id, { action: 'showReminder' }, (response) => {
+						console.log('showReminder');
+						if (chrome.runtime.lastError) {
+							// 静默处理连接错误
+							console.debug('Message ignored:', chrome.runtime.lastError.message);
+						}
+					});
+				}
+			});
 		});
+
 	}
 });
 
