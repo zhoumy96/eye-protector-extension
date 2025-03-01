@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
 	const statsDiv = document.getElementById('stats');
-	const toggle = document.getElementById('timerToggle');
+	const toggleSwitch = document.getElementById('toggleSwitch');
+	const statusText = document.getElementById('statusText');
 
 	// 获取统计数据
 	chrome.storage.local.get('stats', (result) => {
@@ -18,16 +19,24 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
 	});
 
-	// // 开关状态同步
-	// chrome.runtime.sendMessage({ action: 'getTimerStatus' }, (res) => {
-	// 	toggle.checked = res.status;
-	// });
-	//
-	// // 切换定时器状态
-	// toggle.addEventListener('change', (e) => {
-	// 	chrome.runtime.sendMessage({
-	// 		action: 'toggleTimer',
-	// 		status: e.target.checked
-	// 	});
-	// });
+	// switch获取初始状态
+	chrome.storage.local.get('isEnabled', (result) => {
+		const status = result.isEnabled ?? true;
+		toggleSwitch.checked = status;
+		updateStatusText(status);
+	});
+	// switch切换事件
+	toggleSwitch.addEventListener('change', (e) => {
+		const isEnabled = e.target.checked;
+		chrome.runtime.sendMessage({
+			action: 'toggleEnable',
+			status: isEnabled
+		});
+		updateStatusText(isEnabled);
+	});
+	// switch更新文案
+	function updateStatusText(enabled) {
+		statusText.textContent = enabled ? '已启用' : '已禁用';
+		statusText.style.color = enabled ? '#389e0d' : '#ff4d4f';
+	}
 });

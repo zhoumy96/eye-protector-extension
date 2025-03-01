@@ -1,5 +1,5 @@
-// 初始化统计数据和定时器
-let timerStatus = true;
+// 初始化定时器状态和统计数据
+let isEnabled = true;
 let dailyStats = {
 	totalReminders: 0,
 	completedBreaks: 0,
@@ -7,14 +7,22 @@ let dailyStats = {
 	lastUpdate: Date.now()
 };
 
-// 从存储加载数据
-chrome.storage.local.get('stats', (result) => {
-	if (result.stats) {
-		dailyStats = result.stats;
-		checkDailyReset();
-	}
-});
-
+// 创建定时器
+function createAlarm() {
+	console.log('创建定时器');
+	// chrome.alarms.create('eyeProtector', {
+	// 	delayInMinutes: 0.5,
+	// });
+}
+// 取消定时器
+function cancelAlarm() {
+	chrome.alarms.clear('eyeProtector');
+}
+// 保存统计
+function saveStats() {
+	dailyStats.lastUpdate = Date.now();
+	chrome.storage.local.set({ stats: dailyStats });
+}
 // 每日数据重置
 function checkDailyReset() {
 	const lastDate = new Date(dailyStats.lastUpdate).getDate();
@@ -26,24 +34,47 @@ function checkDailyReset() {
 			skippedBreaks: 0,
 			lastUpdate: Date.now()
 		};
+		console.log('每日数据重置');
 		saveStats();
 	}
 }
+// 获取持久化状态
+function loadStorage () {
+	chrome.storage.local.get(['isEnabled', 'stats'], (result) => {
+		// 状态加载
+		if (result.isEnabled !== undefined) {
+			isEnabled = result.isEnabled;
+			updateIcon();
+		}
 
-// 创建定时器
-function createAlarm() {
-	console.log('创建定时器');
-	chrome.alarms.create('eyeProtector', {
-		delayInMinutes: 0.5,
-		// periodInMinutes: 20
+		// 统计数据加载
+		if (result.stats) {
+			dailyStats = result.stats;
+			checkDailyReset();
+		}
+
+		// 根据状态初始化定时器
+		if (isEnabled) createAlarm();
 	});
 }
-
-// 初始化
-chrome.runtime.onInstalled.addListener(() => {
-	createAlarm();
-	chrome.storage.local.set({ stats: dailyStats });
+// 更新工具栏图标
+function updateIcon() {
+	// const iconPath = isEnabled ? "icons/enabled.png" : "icons/disabled.png";
+	// chrome.action.setIcon({ path: {
+	// 		"128": iconPath
+	// 	}});
+}
+// 监听存储变化
+chrome.storage.onChanged.addListener((changes) => {
+	if (changes.isEnabled) {
+		isEnabled = changes.isEnabled.newValue;
+		updateIcon();
+		isEnabled ? createAlarm() : cancelAlarm();
+	}
 });
+
+// Service Worker 启动时加载
+loadStorage();
 
 // 定时器处理
 chrome.alarms.onAlarm.addListener((alarm) => {
@@ -68,26 +99,25 @@ chrome.alarms.onAlarm.addListener((alarm) => {
 				}
 			});
 		});
-
 	}
 });
 
 // 消息处理
-chrome.runtime.onMessage.addListener((msg) => {
-	if (msg.action === 'restartTimer') {
-		dailyStats.completedBreaks++;
-		saveStats();
-		createAlarm();
-	} else if (msg.action === 'toggleTimer') {
-		timerStatus = msg.status;
-	} else if (msg.action === 'skipTimer') {
-		dailyStats.skippedBreaks++;
-		saveStats();
+chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+	switch(msg.action) {
+		case 'toggleEnable':
+			// 直接写入存储，由 storage.onChanged 处理后续逻辑
+			chrome.storage.local.set({ isEnabled: msg.status });
+			sendResponse({ success: true });
+			break;
+		case 'restartTimer':
+			dailyStats.completedBreaks++;
+			saveStats();
+			createAlarm();
+			break;
+		case 'skipTimer':
+			dailyStats.skippedBreaks++;
+			saveStats();
+			break;
 	}
 });
-
-// 保存统计
-function saveStats() {
-	dailyStats.lastUpdate = Date.now();
-	chrome.storage.local.set({ stats: dailyStats });
-}
