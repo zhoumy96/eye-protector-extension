@@ -1,5 +1,9 @@
-// 初始化定时器状态和统计数据
+// 初始化定时器状态、提醒设置、统计数据
 let isEnabled = true;
+let reminderSettings = {
+	interval: 20,
+	breakDuration: 20
+};
 let dailyStats = {
 	totalReminders: 0,
 	completedBreaks: 0,
@@ -10,13 +14,22 @@ let dailyStats = {
 // 创建定时器
 function createAlarm() {
 	console.log('创建定时器');
-	// chrome.alarms.create('eyeProtector', {
-	// 	delayInMinutes: 0.5,
-	// });
+	chrome.alarms.create('eyeProtector', {
+		delayInMinutes: 0.1,
+		// delayInMinutes: currentSettings.interval,
+	});
 }
 // 取消定时器
 function cancelAlarm() {
 	chrome.alarms.clear('eyeProtector');
+}
+// 重启定时器
+function resetAlarm() {
+	chrome.alarms.clear('eyeProtector', () => {
+		if (isEnabled) {
+			createAlarm();
+		}
+	});
 }
 // 保存统计
 function saveStats() {
@@ -40,11 +53,15 @@ function checkDailyReset() {
 }
 // 获取持久化状态
 function loadStorage () {
-	chrome.storage.local.get(['isEnabled', 'stats'], (result) => {
+	chrome.storage.local.get(['isEnabled', 'stats', 'reminderSettings'], (result) => {
 		// 状态加载
 		if (result.isEnabled !== undefined) {
 			isEnabled = result.isEnabled;
 			updateIcon();
+		}
+		// 提醒设置加载
+		if (result.reminderSettings) {
+			reminderSettings = result.reminderSettings;
 		}
 
 		// 统计数据加载
@@ -78,7 +95,7 @@ loadStorage();
 
 // 定时器处理
 chrome.alarms.onAlarm.addListener((alarm) => {
-	if (alarm.name === 'eyeProtector' && timerStatus) {
+	if (alarm.name === 'eyeProtector' && isEnabled) {
 		dailyStats.totalReminders++;
 		saveStats();
 
@@ -108,7 +125,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 		case 'toggleEnable':
 			// 直接写入存储，由 storage.onChanged 处理后续逻辑
 			chrome.storage.local.set({ isEnabled: msg.status });
-			sendResponse({ success: true });
+			// sendResponse({ success: true });
 			break;
 		case 'restartTimer':
 			dailyStats.completedBreaks++;
@@ -118,6 +135,11 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 		case 'skipTimer':
 			dailyStats.skippedBreaks++;
 			saveStats();
+			break;
+		case 'updateReminderSettings':
+			reminderSettings = msg.reminderSettings;
+			chrome.storage.local.set({ reminderSettings });
+			resetAlarm();
 			break;
 	}
 });

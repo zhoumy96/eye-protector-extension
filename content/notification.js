@@ -1,11 +1,22 @@
 class EyeNotifier {
 	constructor() {
+		this.remainingTime = 20;
 		this.initUI();
 		this.setupListeners();
-		this.setupAutoClose();
+	}
+	async loadSettings() {
+		return new Promise((resolve) => {
+			chrome.storage.local.get('settings', (result) => {
+				if (result.settings) {
+					this.remainingTime = Math.max(5, result.settings.breakDuration || 20)
+				}
+				resolve();
+			});
+		});
 	}
 
 	initUI() {
+		// await this.loadSettings();
 		this.container = document.createElement('div');
 		this.container.className = 'eye-notification breathing-guide';
 
@@ -19,7 +30,7 @@ class EyeNotifier {
       <div class="title">护眼时间到！</div>
       <div class="tip">
         请眺望<span class="highlight">6米外</span>的物体<br>
-        <span class="subtip">持续20秒眼部放松</span>
+        <span class="subtip">持续${this.remainingTime}秒眼部放松</span>
       </div>
     `;
 
@@ -35,9 +46,11 @@ class EyeNotifier {
 
 		// 多显示器适配
 		this.checkViewport();
+
 	}
 
 	setupListeners() {
+		console.log('setupListeners');
 		this.button.addEventListener('click', () => this.handleConfirm());
 		window.addEventListener('resize', () => this.checkViewport());
 
@@ -47,11 +60,6 @@ class EyeNotifier {
 				if (msg.action === 'showReminder') this.show();
 			});
 		}
-	}
-
-	setupAutoClose() {
-		this.autoCloseTimer = null;
-		this.remainingTime = 20;
 	}
 
 	checkViewport() {
@@ -66,7 +74,6 @@ class EyeNotifier {
 	}
 
 	startCountdown() {
-		this.remainingTime = 20;
 		this.updateCountdown();
 
 		this.autoCloseTimer = setInterval(() => {

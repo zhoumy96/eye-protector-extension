@@ -39,4 +39,33 @@ document.addEventListener('DOMContentLoaded', () => {
 		statusText.textContent = enabled ? '已启用' : '已禁用';
 		statusText.style.color = enabled ? '#389e0d' : '#ff4d4f';
 	}
+
+	// 提醒设置
+	chrome.storage.local.get(['settings'], (result) => {
+		const defaultSettings = {
+			interval: 20,
+			breakDuration: 20
+		};
+		const settings = result.settings || defaultSettings;
+
+		document.getElementById('intervalInput').value = settings.interval;
+		document.getElementById('breakInput').value = settings.breakDuration;
+	});
+	// 保存设置
+	document.getElementById('saveInterval').addEventListener('click', () => {
+		const newSettings = {
+			interval: Math.max(1, Math.min(180,
+				parseInt(document.getElementById('intervalInput').value) || 20)),
+			breakDuration: Math.max(5, Math.min(300,
+				parseInt(document.getElementById('breakInput').value) || 20))
+		};
+
+		chrome.storage.local.set({ settings: newSettings }, () => {
+			chrome.runtime.sendMessage({
+				action: 'updateReminderSettings',
+				reminderSettings: newSettings
+			});
+			alert('设置已保存！');
+		});
+	});
 });
