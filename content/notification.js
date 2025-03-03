@@ -1,12 +1,11 @@
 class EyeNotifier {
 	constructor() {
 		this.remainingTime = 20;
-		this.initUI();
-		this.setupListeners();
+		this.init();
 	}
 	async loadSettings() {
 		return new Promise((resolve) => {
-			chrome.storage.local.get('settings', (result) => {
+			chrome.storage.local.get('reminderSettings', (result) => {
 				if (result.settings) {
 					this.remainingTime = Math.max(5, result.settings.breakDuration || 20)
 				}
@@ -15,8 +14,15 @@ class EyeNotifier {
 		});
 	}
 
+	init() {
+		this.loadSettings().then(() => {
+			this.initUI();
+			this.setupListeners();
+			this.checkViewport();
+		})
+	}
+
 	initUI() {
-		// await this.loadSettings();
 		this.container = document.createElement('div');
 		this.container.className = 'eye-notification breathing-guide';
 
@@ -43,25 +49,38 @@ class EyeNotifier {
 
 		this.container.append(icon, content, this.countdown, this.button);
 		document.body.appendChild(this.container);
-
-		// 多显示器适配
-		this.checkViewport();
-
 	}
 
+	// 增加监听
 	setupListeners() {
-		console.log('setupListeners');
 		this.button.addEventListener('click', () => this.handleConfirm());
 		window.addEventListener('resize', () => this.checkViewport());
 
 		// 增加消息监听器存在性检查
 		if (chrome.runtime?.onMessage) {
 			chrome.runtime.onMessage.addListener((msg) => {
-				if (msg.action === 'showReminder') this.show();
+				if (msg.action === 'showReminder') {
+					this.show()
+				}
 			});
 		}
+		// 监听配置项修改
+		chrome.storage.onChanged.addListener((changes) => {
+			if (changes.reminderSettings) {
+				this.remainingTime = changes.reminderSettings.newValue.breakDuration;
+				this.updateNotificationContent();
+			}
+		});
 	}
 
+	// 更新提示内容和定时器
+	updateNotificationContent() {
+		const subtip = this.container.querySelector('.subtip');
+		subtip.textContent = `持续${this.remainingTime}秒眼部放松`;
+		this.updateCountdown();
+	}
+
+	// 适配窗口
 	checkViewport() {
 		const isMobile = window.matchMedia('(max-width: 600px)').matches;
 		this.container.classList.toggle('mobile-view', isMobile);

@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
 				parseInt(document.getElementById('breakInput').value) || 20))
 		};
 
-		chrome.storage.local.set({ settings: newSettings }, () => {
+		chrome.storage.local.set({ reminderSettings: newSettings }, () => {
 			chrome.runtime.sendMessage({
 				action: 'updateReminderSettings',
 				reminderSettings: newSettings

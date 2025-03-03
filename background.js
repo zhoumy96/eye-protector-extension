@@ -125,7 +125,6 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 		case 'toggleEnable':
 			// 直接写入存储，由 storage.onChanged 处理后续逻辑
 			chrome.storage.local.set({ isEnabled: msg.status });
-			// sendResponse({ success: true });
 			break;
 		case 'restartTimer':
 			dailyStats.completedBreaks++;
@@ -138,7 +137,6 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 			break;
 		case 'updateReminderSettings':
 			reminderSettings = msg.reminderSettings;
-			chrome.storage.local.set({ reminderSettings });
 			resetAlarm();
 			break;
 	}
