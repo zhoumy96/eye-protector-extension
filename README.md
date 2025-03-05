@@ -31,7 +31,7 @@
 
 2. **手动安装**
    ```bash
-   git clone https://github.com/yourusername/eye-protector.git
+   git clone https://github.com/zhoumy96/eye-protector-extension.git
    # Chrome 访问 chrome://extensions/
    # 启用开发者模式 -> 加载已解压的扩展程序
 
