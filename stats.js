@@ -59,6 +59,8 @@ document.addEventListener('DOMContentLoaded', () => {
 			breakDuration: Math.max(5, Math.min(300,
 				parseInt(document.getElementById('breakInput').value) || 20))
 		};
+		document.getElementById('intervalInput').value = newSettings.interval;
+		document.getElementById('breakInput').value = newSettings.breakDuration;
 
 		chrome.storage.local.set({ reminderSettings: newSettings }, () => {
 			chrome.runtime.sendMessage({

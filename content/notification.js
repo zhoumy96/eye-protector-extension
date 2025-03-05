@@ -1,13 +1,15 @@
 class EyeNotifier {
 	constructor() {
-		this.remainingTime = 20;
+		this.remainingTime = 20; // 当前计时时间
+		this.breakDuration = 20; // 设置的breakDuration时间
 		this.init();
 	}
 	async loadSettings() {
 		return new Promise((resolve) => {
 			chrome.storage.local.get('reminderSettings', (result) => {
 				if (result.settings) {
-					this.remainingTime = Math.max(5, result.settings.breakDuration || 20)
+					this.remainingTime = Math.max(5, result.settings.breakDuration || 20);
+					this.breakDuration = Math.max(5, result.settings.breakDuration || 20);
 				}
 				resolve();
 			});
@@ -36,7 +38,7 @@ class EyeNotifier {
       <div class="title">护眼时间到！</div>
       <div class="tip">
         请眺望<span class="highlight">6米外</span>的物体<br>
-        <span class="subtip">持续${this.remainingTime}秒眼部放松</span>
+        <span class="subtip">持续${this.breakDuration}秒眼部放松</span>
       </div>
     `;
 
@@ -60,7 +62,12 @@ class EyeNotifier {
 		if (chrome.runtime?.onMessage) {
 			chrome.runtime.onMessage.addListener((msg) => {
 				if (msg.action === 'showReminder') {
+					console.log('this.show');
 					this.show()
+				}
+				if (msg.action === 'contextInvalidated') {
+					console.log('扩展上下文失效，正在重新加载...');
+					// window.location.reload();
 				}
 			});
 		}
@@ -68,6 +75,7 @@ class EyeNotifier {
 		chrome.storage.onChanged.addListener((changes) => {
 			if (changes.reminderSettings) {
 				this.remainingTime = changes.reminderSettings.newValue.breakDuration;
+				this.breakDuration = changes.reminderSettings.newValue.breakDuration;
 				this.updateNotificationContent();
 			}
 		});
@@ -88,6 +96,7 @@ class EyeNotifier {
 
 	show() {
 		console.log('show');
+		this.remainingTime = this.breakDuration;
 		this.container.classList.add('visible');
 		this.startCountdown();
 	}
@@ -113,6 +122,7 @@ class EyeNotifier {
 
 	handleConfirm() {
 		clearInterval(this.autoCloseTimer);
+		this.autoCloseTimer = null;
 		this.container.classList.remove('visible');
 		chrome.runtime.sendMessage({ action: 'restartTimer' });
 	}

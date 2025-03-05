@@ -1,9 +1,11 @@
-// 初始化定时器状态、提醒设置、统计数据
+// 初始化定时器状态
 let isEnabled = true;
+// 提醒设置
 let reminderSettings = {
 	interval: 20,
 	breakDuration: 20
 };
+// 统计数据
 let dailyStats = {
 	totalReminders: 0,
 	completedBreaks: 0,
@@ -13,10 +15,11 @@ let dailyStats = {
 
 // 创建定时器
 function createAlarm() {
-	console.log('创建定时器');
+	console.log('创建定时器::', reminderSettings);
 	chrome.alarms.create('eyeProtector', {
-		delayInMinutes: 0.1,
+		delayInMinutes: 0.1, // test
 		// delayInMinutes: currentSettings.interval,
+		// periodInMinutes: reminderSettings.breakDuration / 60,
 	});
 }
 // 取消定时器
@@ -26,6 +29,10 @@ function cancelAlarm() {
 // 重启定时器
 function resetAlarm() {
 	chrome.alarms.clear('eyeProtector', () => {
+		if (chrome.runtime.lastError) {
+			console.log('清除定时器失败:', chrome.runtime.lastError.message);
+			return;
+		}
 		if (isEnabled) {
 			createAlarm();
 		}
@@ -129,11 +136,12 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 		case 'restartTimer':
 			dailyStats.completedBreaks++;
 			saveStats();
-			createAlarm();
+			resetAlarm();
 			break;
 		case 'skipTimer':
 			dailyStats.skippedBreaks++;
-			saveStats();
+			// saveStats();
+			resetAlarm();
 			break;
 		case 'updateReminderSettings':
 			reminderSettings = msg.reminderSettings;
