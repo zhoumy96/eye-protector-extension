@@ -26,14 +26,19 @@ document.addEventListener('DOMContentLoaded', () => {
 		updateStatusText(status);
 	});
 	// switch切换事件
-	toggleSwitch.addEventListener('change', (e) => {
+	toggleSwitch.addEventListener('change', async (e) => {
 		const isEnabled = e.target.checked;
-		chrome.runtime.sendMessage({
-			action: 'toggleEnable',
-			status: isEnabled
-		});
-		updateStatusText(isEnabled);
+		try {
+			await chrome.runtime.sendMessage({
+				action: 'toggleEnable',
+				status: isEnabled
+			});
+			updateStatusText(isEnabled);
+		} catch (error) {
+			alert('切换状态失败，请重试');
+		}
 	});
+
 	// switch更新文案
 	function updateStatusText(enabled) {
 		statusText.textContent = enabled ? '已启用' : '已禁用';
@@ -53,19 +58,32 @@ document.addEventListener('DOMContentLoaded', () => {
 	});
 	// 保存设置
 	document.getElementById('saveInterval').addEventListener('click', () => {
+		const intervalInput = parseInt(document.getElementById('intervalInput').value, 10) || 20;
+		const breakInput = parseInt(document.getElementById('breakInput').value, 10) || 20;
+
+		// 增加更严格的输入验证
+		if (isNaN(intervalInput) || intervalInput < 1 || intervalInput > 180) {
+			alert('间隔时间必须在1到180分钟之间');
+			return;
+		}
+
+		if (isNaN(breakInput) || breakInput < 5 || breakInput > 300) {
+			alert('休息时长必须在5到300秒之间');
+			return;
+		}
+
 		const newSettings = {
-			interval: Math.max(1, Math.min(180,
-				parseInt(document.getElementById('intervalInput').value) || 20)),
-			breakDuration: Math.max(5, Math.min(300,
-				parseInt(document.getElementById('breakInput').value) || 20))
+			interval: intervalInput,
+			breakDuration: breakInput
 		};
+
 		document.getElementById('intervalInput').value = newSettings.interval;
 		document.getElementById('breakInput').value = newSettings.breakDuration;
 
-		chrome.storage.local.set({ reminderSettings: newSettings }, () => {
+		chrome.storage.local.set({ settings: newSettings }, () => {
 			chrome.runtime.sendMessage({
-				action: 'updateReminderSettings',
-				reminderSettings: newSettings
+				action: 'updateSettings',
+				settings: newSettings
 			});
 			alert('设置已保存！');
 		});
