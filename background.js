@@ -181,7 +181,7 @@ class AlarmService {
 		return chrome.alarms.create(this.ALARM_NAME, {
 			// delayInMinutes: interval,
 			// 延迟时间（以分钟为单位），用于设置某些操作或事件的延迟执行时间
-			delayInMinutes: 1,
+			delayInMinutes: 0.1,
 			// 执行周期（以分钟为单位），用于定义重复执行任务或操作的时间间隔
 			// periodInMinutes: 1,
 		});

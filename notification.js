@@ -26,7 +26,6 @@ class EyeNotifier {
 		this.#createUI();
 		this.#setupEventListeners();
 		this.#setupMessageListener();
-		this.#observeViewport();
 	}
 
 	/**
@@ -51,23 +50,49 @@ class EyeNotifier {
 	 * 它将构建一个包含提醒信息、计时器和确认按钮的容器
 	 */
 	#createUI() {
-		if (document.querySelector('.eye-notification')) {
+		if (document.querySelector('.notification-card')) {
 			return;
 		}
 		this.container = document.createElement('div');
-		this.container.className = 'eye-notification';
+		this.container.className = 'notification-card';
 		this.container.innerHTML = `
-      <div class="breath-icon">👁️</div>
-      <div class="content">
-        <h2>护眼时间到！</h2>
-        <p>
-          请眺望<span class="highlight">6米外</span>的物体<br>
-          <span class="subtip">持续${this.settings.breakDuration}秒眼部放松</span>
-        </p>
-        <div class="countdown"></div>
-        <button class="confirm-btn">✅ 已完成休息</button>
-      </div>
-    `;
+			<div class="notification-header">
+				<div class="animated-eye">
+					<svg class="eye-icon" viewBox="0 0 64 64">
+						<path d="M32 16C16 16 8 32 8 32s8 16 24 16 24-16 24-16-8-16-24-16zm0 28c-6.6 0-12-5.4-12-12s5.4-12 12-12 12 5.4 12 12-5.4 12-12 12z"/>
+						<circle cx="32" cy="32" r="8"/>
+					</svg>
+				</div>
+				<h2 class="notification-title">Eye Care Reminder</h2>
+			</div>
+			
+			<div class="notification-body">
+				<p class="instruction-text">
+					Focus on an object 
+					<span class="emphasis">6 meters away</span>
+				</p>
+				<p class="duration-text">
+					Relax your eyes for 
+					<span class="duration">${this.settings.breakDuration}s</span>
+				</p>
+				
+				<div class="countdown-wrapper">
+					<div class="circular-progress">
+						<div class="progress-fill"></div>
+						<span class="countdown-text">${this.settings.breakDuration}</span>
+					</div>
+				</div>
+			</div>
+			
+			<div class="action-buttons">
+				<button class="confirm-button">
+					<svg class="check-icon" viewBox="0 0 24 24">
+						<path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+					</svg>
+					Completed
+				</button>
+			</div>
+		`;
 
 		document.body.appendChild(this.container);
 		this.#updateElementsRef();
@@ -78,9 +103,9 @@ class EyeNotifier {
 	 * 它将在创建UI后被调用，以保存对内部元素的引用
 	 */
 	#updateElementsRef() {
-		this.countdownEl = this.container.querySelector('.countdown');
-		this.subtipEl = this.container.querySelector('.subtip');
-		this.confirmBtn = this.container.querySelector('.confirm-btn');
+		this.countdownEl = this.container.querySelector('.countdown-text');
+		this.duration = this.container.querySelector('.duration');
+		this.confirmBtn = this.container.querySelector('.confirm-button');
 	}
 
 	/**
@@ -110,24 +135,13 @@ class EyeNotifier {
 	}
 
 	/**
-	 * 观察视口大小变化
-	 * 根据视口宽度应用或移除'mobile'类名
-	 */
-	#observeViewport() {
-		const mediaQuery = window.matchMedia('(max-width: 600px)');
-		mediaQuery.addEventListener('change', e =>
-			this.container.classList.toggle('mobile', e.matches));
-		this.container.classList.toggle('mobile', mediaQuery.matches);
-	}
-
-	/**
 	 * 更新设置并调整提醒UI
 	 * @param {Object} settings - 新的设置对象
 	 */
 	#updateSettings(settings) {
 		chrome.runtime.sendMessage({ action: 'log', log: settings });
 		this.settings = settings;
-		this.subtipEl.textContent = `持续${settings.breakDuration || 20}秒眼部放松`;
+		this.duration.textContent = `${settings.breakDuration || 20}`;
 	}
 
 	/**
@@ -163,7 +177,7 @@ class EyeNotifier {
 	 * @param {number} seconds - 剩余时间（秒）
 	 */
 	#updateCountdown(seconds) {
-		this.countdownEl.textContent = `自动关闭剩余：${seconds}s`;
+		this.countdownEl.textContent = `${seconds}`;
 	}
 
 	/**

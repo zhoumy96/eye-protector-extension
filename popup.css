@@ -1,4 +1,3 @@
-/* popup.css */
 :root {
   --primary-color: #007AFF;
   --background: #F5F5F7;
@@ -9,20 +8,19 @@
   --warning: #FF9500;
   --border-color: #D1D1D6;
 }
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell;
+.eye-notification {
   background: var(--background);
   margin: 0;
   padding: 16px;
   width: 320px;
   color: var(--text-primary);
 }
-.header {
+.eye-notification .header {
   padding: 12px 0;
   border-bottom: 1px solid var(--border-color);
   margin-bottom: 16px;
 }
-.app-title {
+.eye-notification .app-title {
   font-size: 20px;
   font-weight: 600;
   display: flex;
@@ -30,47 +28,47 @@ body {
   gap: 8px;
   margin: 0;
 }
-.app-icon {
+.eye-notification .app-icon {
   width: 24px;
   height: 24px;
   fill: var(--primary-color);
 }
-.control-card,
-.settings-card,
-.stats-card {
+.eye-notification .control-card,
+.eye-notification .settings-card,
+.eye-notification .stats-card {
   background: var(--card-bg);
   border-radius: 12px;
   padding: 16px;
   margin-bottom: 16px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
-.control-row {
+.eye-notification .control-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
-.control-label {
+.eye-notification .control-label {
   font-size: 16px;
   display: flex;
   align-items: center;
   gap: 8px;
 }
-.sf-symbol {
+.eye-notification .sf-symbol {
   font-family: "SF Pro Icons";
   font-size: 18px;
 }
-.ios-switch {
+.eye-notification .ios-switch {
   position: relative;
   display: inline-block;
   width: 52px;
   height: 32px;
 }
-.ios-switch input {
+.eye-notification .ios-switch input {
   opacity: 0;
   width: 0;
   height: 0;
 }
-.ios-switch-slider {
+.eye-notification .ios-switch-slider {
   position: absolute;
   cursor: pointer;
   top: 0;
@@ -81,7 +79,7 @@ body {
   transition: 0.4s;
   border-radius: 16px;
 }
-.ios-switch-slider:before {
+.eye-notification .ios-switch-slider:before {
   position: absolute;
   content: "";
   height: 24px;
@@ -93,24 +91,24 @@ body {
   border-radius: 50%;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
-input:checked + .ios-switch-slider {
+.eye-notification input:checked + .ios-switch-slider {
   background-color: var(--primary-color);
 }
-input:checked + .ios-switch-slider:before {
+.eye-notification input:checked + .ios-switch-slider:before {
   transform: translateX(20px);
 }
-.input-row {
+.eye-notification .input-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 12px;
 }
-.input-container {
+.eye-notification .input-container {
   display: flex;
   align-items: center;
   gap: 8px;
 }
-.ios-input {
+.eye-notification .ios-input {
   width: 80px;
   padding: 8px 12px;
   border: 1px solid var(--border-color);
@@ -118,16 +116,16 @@ input:checked + .ios-switch-slider:before {
   font-size: 16px;
   text-align: right;
 }
-.ios-input:focus {
+.eye-notification .ios-input:focus {
   outline: none;
   border-color: var(--primary-color);
   box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.2);
 }
-.input-unit {
+.eye-notification .input-unit {
   color: var(--text-secondary);
   font-size: 14px;
 }
-.ios-button {
+.eye-notification .ios-button {
   width: 100%;
   padding: 12px;
   background: var(--primary-color);
@@ -142,39 +140,39 @@ input:checked + .ios-switch-slider:before {
   gap: 8px;
   transition: all 0.2s;
 }
-.ios-button:active {
+.eye-notification .ios-button:active {
   opacity: 0.8;
   transform: scale(0.98);
 }
-.stats-grid {
+.eye-notification .stats-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 12px;
 }
-.stat-item {
+.eye-notification .stat-item {
   padding: 16px;
   border-radius: 8px;
   position: relative;
   overflow: hidden;
 }
-.stat-item.success {
+.eye-notification .stat-item.success {
   background: rgba(52, 199, 89, 0.1);
   color: var(--success);
 }
-.stat-item.warning {
+.eye-notification .stat-item.warning {
   background: rgba(255, 149, 0, 0.1);
   color: var(--warning);
 }
-.stat-value {
+.eye-notification .stat-value {
   font-size: 24px;
   font-weight: 700;
   margin-bottom: 4px;
 }
-.stat-label {
+.eye-notification .stat-label {
   font-size: 14px;
   opacity: 0.9;
 }
-.stat-progress {
+.eye-notification .stat-progress {
   position: absolute;
   bottom: 0;
   left: 0;
