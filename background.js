@@ -58,7 +58,7 @@ const initialState = {
 		// 间隔时间，单位为分钟
 		interval: 20,
 		// 休息持续时间，单位为秒
-		// breakDuration: 20
+		breakDuration: 20
 	},
 	// 功能的统计信息
 	stats: {

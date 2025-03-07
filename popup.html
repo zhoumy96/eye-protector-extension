@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>EyeCare Pro</title>
+	<link rel="stylesheet" href="popup.css">
+</head>
+<body>
+<div class="container">
+	<header class="header">
+		<h1 class="app-title">
+			<svg class="app-icon" viewBox="0 0 24 24">
+				<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm3.88-11.71L10 14.17l-1.88-1.88a.996.996 0 1 0-1.41 1.41l2.59 2.59c.39.39 1.02.39 1.41 0l6.29-6.29a.996.996 0 0 0 0-1.41c-.39-.38-1.03-.38-1.42 0z"/>
+			</svg>
+			EyeCare Pro
+		</h1>
+	</header>
+
+	<section class="control-card">
+		<div class="control-row">
+			<div class="control-label">
+				<span class="sf-symbol">􀎫</span>
+				Active Status
+			</div>
+			<label class="ios-switch">
+				<input type="checkbox" id="toggleSwitch">
+				<span class="ios-switch-slider"></span>
+			</label>
+		</div>
+	</section>
+
+	<section class="settings-card">
+		<h2 class="section-title">
+			<span class="sf-symbol">􀐬</span>
+			Schedule Settings
+		</h2>
+
+		<div class="form-group">
+			<div class="input-row">
+				<label class="input-label">
+					<span class="sf-symbol">􀐯</span>
+					Work Interval
+				</label>
+				<div class="input-container">
+					<input type="number"
+								 id="intervalInput"
+								 class="ios-input"
+								 min="5"
+								 max="120"
+								 step="5"
+								 placeholder="20">
+					<span class="input-unit">minutes</span>
+				</div>
+			</div>
+
+			<div class="input-row">
+				<label class="input-label">
+					<span class="sf-symbol">􀝎</span>
+					Break Duration
+				</label>
+				<div class="input-container">
+					<input type="number"
+								 id="breakInput"
+								 class="ios-input"
+								 min="1"
+								 max="10"
+								 step="1"
+								 placeholder="3">
+					<span class="input-unit">minutes</span>
+				</div>
+			</div>
+		</div>
+
+		<button class="ios-button primary" id="saveInterval">
+			<span class="sf-symbol">􀈎</span>
+			Save Preferences
+		</button>
+	</section>
+
+	<section class="stats-card">
+		<h2 class="section-title">
+			<span class="sf-symbol">􀈂</span>
+			Today's Activity
+		</h2>
+
+		<div class="stats-grid">
+			<div class="stat-item success">
+				<div class="stat-value" id='stat-completed'>12</div>
+				<div class="stat-label">Completed</div>
+				<div class="stat-progress"></div>
+			</div>
+			<div class="stat-item warning">
+				<div class="stat-value" id='stat-skipped'>2</div>
+				<div class="stat-label">Skipped</div>
+				<div class="stat-progress"></div>
+			</div>
+		</div>
+	</section>
+</div>
+<script src="popup.js"></script>
+</body>
+</html>

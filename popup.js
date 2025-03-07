@@ -1,29 +1,18 @@
 document.addEventListener('DOMContentLoaded', () => {
-	const statsDiv = document.getElementById('stats');
 	const toggleSwitch = document.getElementById('toggleSwitch');
-	const statusText = document.getElementById('statusText');
+	const statCompleted = document.getElementById('stat-completed');
+	const statSkipped = document.getElementById('stat-skipped');
 
 	// 获取统计数据
 	chrome.storage.local.get('stats', (result) => {
 		const stats = result.stats || {};
-		statsDiv.innerHTML = `
-      <div class="stat-item">
-        ✅ 已完成休息：${stats.completedBreaks || 0}次
-      </div>
-      <div class="stat-item">
-        ⏰ 今日提醒次数：${stats.totalReminders || 0}次
-      </div>
-      <div class="stat-item">
-        ⏰ 今日跳过次数：${stats.skippedBreaks || 0}次
-      </div>
-    `;
+		statCompleted.textContent = stats.completedBreaks || 0;
+		statSkipped.textContent = stats.skippedBreaks || 0;
 	});
 
 	// switch获取初始状态
 	chrome.storage.local.get('isEnabled', (result) => {
-		const status = result.isEnabled ?? true;
-		toggleSwitch.checked = status;
-		updateStatusText(status);
+		toggleSwitch.checked = result.isEnabled ?? true;
 	});
 	// switch切换事件
 	toggleSwitch.addEventListener('change', async (e) => {
@@ -33,17 +22,10 @@ document.addEventListener('DOMContentLoaded', () => {
 				action: 'toggleEnable',
 				status: isEnabled
 			});
-			updateStatusText(isEnabled);
 		} catch (error) {
 			alert('切换状态失败，请重试');
 		}
 	});
-
-	// switch更新文案
-	function updateStatusText(enabled) {
-		statusText.textContent = enabled ? '已启用' : '已禁用';
-		statusText.style.color = enabled ? '#389e0d' : '#ff4d4f';
-	}
 
 	// 提醒设置
 	chrome.storage.local.get(['settings'], (result) => {
